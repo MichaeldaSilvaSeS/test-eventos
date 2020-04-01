@@ -1,6 +1,8 @@
-package br.com.test.eventos.gravar;
+package br.com.michael.robowindows.usecase.gravar;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -12,11 +14,23 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.michael.robowindows.dataprovider.gravar.Gravador;
+
 @Component
 public class GravadorDeEvento extends Gravador {
+	
+	public interface OuvinteGravador {
+		public void eventoGravado(EventoGravar eventoGravado);
+	}
 
 	private long tempo = 0;
 	private Queue<EventoGravar> eventos = new LinkedBlockingQueue<EventoGravar>();
+	private List<OuvinteGravador> ouvintes = new LinkedList<OuvinteGravador>();
+	private boolean pausado = false;
+	
+	public void adicionarOuvinte(OuvinteGravador ouvinte) {
+		this.ouvintes.add(ouvinte);
+	}
 
 	@Override
 	protected void adicionarEvento(String tipoEvento, NativeInputEvent nativeEvent) {
@@ -32,13 +46,13 @@ public class GravadorDeEvento extends Gravador {
 
 		long tempoCorrente = System.currentTimeMillis();
 		eventoGravar.espera = tempoCorrente - tempo;
-		eventos.add(eventoGravar);
+		gravarEvento(eventoGravar);
 		tempo = tempoCorrente;
 	}
 
 	public void gravar() throws Exception {
 		tempo = System.currentTimeMillis();
-		iniciar();
+		inicarEscuta();
 	}
 
 	public void pausa(String comando) {
@@ -49,12 +63,27 @@ public class GravadorDeEvento extends Gravador {
 		}
 		sc.close();
 	}
+	
+	public void pausar() throws Exception {
+		if(pausado)
+			pausarEscuta();
+		else
+			inicarEscuta();
+		
+		pausado = !pausado;
+	}
 
-	public void salvar(File arquivo) throws Exception {
-		finalizar();
+	public void parar(File arquivo) throws Exception {
+		pausar();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.writeValue(arquivo, eventos);
+	}
+	
+	protected void gravarEvento(EventoGravar eventoGravado) {
+		eventos.add(eventoGravado);
+		for(OuvinteGravador ouvinte : ouvintes)
+			ouvinte.eventoGravado(eventoGravado);
 	}
 
 }

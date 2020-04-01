@@ -1,4 +1,4 @@
-package br.com.test.eventos.reproduzir;
+package br.com.michael.robowindows.entrypoint.cli;
 
 import java.io.File;
 
@@ -8,15 +8,17 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Order(value=1)
+import br.com.michael.robowindows.usecase.gravar.GravadorDeEvento;
+
+@Order(value=2)
 @Component
-public class ReprodutorRunner implements ApplicationRunner{
+public class GravadorRunner implements ApplicationRunner{
 	
 	@Autowired
-	private ReprodutorDeEvento reprodutorDeEvento;
+	private GravadorDeEvento gravadorDeEvento;
 	
 	public void run(ApplicationArguments args) throws Exception {
-		if(!args.getOptionNames().contains("reproduzir"))
+		if(!args.getOptionNames().contains("gravar"))
 			return;
 		
 		if(!args.getOptionNames().contains("arquivo") || args.getOptionValues("arquivo").size() == 0) {
@@ -25,17 +27,18 @@ public class ReprodutorRunner implements ApplicationRunner{
 			System.out.println("=============================");
 			return;
 		}
-
-		File arquivo = new File(args.getOptionValues("arquivo").get(0));
-		if(!(arquivo.exists() || arquivo.canRead() || arquivo.isFile()) ) {
-			System.out.println("=============================");
-			System.out.println("Parametro --arquivo invalido");
-			System.out.println("=============================");
-			return;
-		}
-
-		System.out.println("Reproduzindo... ");
-		reprodutorDeEvento.reproduzir(arquivo);
+		
+		String caminhoArquivo = args.getOptionValues("arquivo").get(0);
+		
+		System.out.println("Gravando... ");
+		gravadorDeEvento.gravar();
+		
+		System.out.print("Digite exit para encerrar a gravacao: ");
+		gravadorDeEvento.pausa("exit");
+		
+		System.out.println("Salvando... ");
+		gravadorDeEvento.parar(new File(caminhoArquivo));
+		
 		System.exit(0);
 	}
 

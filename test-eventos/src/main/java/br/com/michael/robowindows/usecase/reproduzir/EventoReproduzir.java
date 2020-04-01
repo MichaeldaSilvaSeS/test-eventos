@@ -1,4 +1,4 @@
-package br.com.test.eventos.reproduzir;
+package br.com.michael.robowindows.usecase.reproduzir;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

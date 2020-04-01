@@ -1,4 +1,4 @@
-package br.com.test.eventos.gravar;
+package br.com.michael.robowindows.dataprovider.gravar;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +49,7 @@ public abstract class Gravador implements NativeKeyListener, NativeMouseListener
 	public void nativeMouseWheelMoved(NativeMouseWheelEvent nativeEvent) {
 	}
 	
-	public void iniciar()
+	public void inicarEscuta()
 			throws NativeHookException {
 		Logger.getLogger(GlobalScreen.class.getPackage().getName()).setLevel(Level.OFF);
 		
@@ -60,7 +60,7 @@ public abstract class Gravador implements NativeKeyListener, NativeMouseListener
 		GlobalScreen.addNativeMouseMotionListener(this);
 	}
 	
-	protected void finalizar() throws NativeHookException {
+	protected void pausarEscuta() throws NativeHookException {
 		GlobalScreen.unregisterNativeHook();
 		GlobalScreen.removeNativeKeyListener(this);
 		GlobalScreen.removeNativeMouseListener(this);

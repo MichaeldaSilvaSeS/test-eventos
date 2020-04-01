@@ -1,4 +1,4 @@
-package br.com.test.eventos.ajuda;
+package br.com.michael.robowindows.entrypoint.cli;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,7 +11,7 @@ public class AjudaRunner implements ApplicationRunner{
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		if(args.getOptionNames().contains("reproduzir") || args.getOptionNames().contains("gravar"))
+		if(args.getOptionNames().contains("ajuda"))
 			return;
 			
 		System.out.println("=============================");
